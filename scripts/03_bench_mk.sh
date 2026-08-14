@@ -31,7 +31,7 @@ cd "$MK_DIR"
 
 say "megakernel (mode=mk)"
 python megakernels/scripts/generate.py \
-  mode=mk l1 \
+  mode=mk .l1 \
   prompt="$PROMPT" \
   ntok="$NTOK" \
   batch_size=1 \
@@ -42,7 +42,7 @@ python megakernels/scripts/generate.py \
 
 say "PyTorch eager (mode=torch)"
 python megakernels/scripts/generate.py \
-  mode=torch l1 \
+  mode=torch .l1 \
   prompt="$PROMPT" \
   ntok="$NTOK" \
   batch_size=1 \

@@ -16,19 +16,21 @@ source "$ROOT/.venvs/mk/bin/activate"
 cd "$MK_DIR"
 
 say "Numerics: megakernel vs reference path (diff_test.py, all layers)"
-python megakernels/scripts/diff_test.py full 2>&1 | tee "$RESULTS/diff_test.log"
+# pydra config methods take a LEADING DOT (".full"); a bare "full" is parsed as a
+# key=value pair and raises. Default layer_limit=1 checks one layer; .full checks all.
+python megakernels/scripts/diff_test.py .full 2>&1 | tee "$RESULTS/diff_test.log"
 
 say "Generation sanity: does it produce coherent text?"
 # If this emits token soup, the timing numbers downstream are meaningless.
 python megakernels/scripts/generate.py \
-  mode=mk l1 \
+  mode=mk .l1 \
   prompt="What is the capital of France?" \
   ntok=40 \
   2>&1 | tee "$RESULTS/sanity_mk.log"
 
 say "Same prompt through PyTorch eager, for comparison"
 python megakernels/scripts/generate.py \
-  mode=torch l1 \
+  mode=torch .l1 \
   prompt="What is the capital of France?" \
   ntok=40 \
   2>&1 | tee "$RESULTS/sanity_torch.log"
