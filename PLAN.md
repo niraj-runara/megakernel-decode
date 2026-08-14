@@ -53,10 +53,17 @@ These are the things that waste rented GPU hours. Each is free to resolve in adv
 1. **`meta-llama/Llama-3.2-1B-Instruct` is a gated model.** Accept the license on HuggingFace and
    generate a read token now. Hitting this at hour one of a rented box is the single most likely
    way to burn money on this step.
-2. **Python 3.12 exactly.** `pyproject.toml` requires `>=3.12`, and the megakernel `make` takes
-   `PYTHON_VERSION=3.12` to locate headers. The dev box here runs 3.14, which will not work.
-3. **Torch must come from the cu128 index**, per the repo README — not default PyPI.
-4. **vLLM and SGLang need separate environments.** Their dependency sets conflict, and
+2. **Python 3.12 exactly.** `pyproject.toml` requires `>=3.12`. The upstream Makefile defaults
+   `PYTHON_VERSION` to **3.13** and links `-lpython$(PYTHON_VERSION)`, so it must be set to 3.12
+   explicitly or the link fails. Requires `python3.12-dev` for `libpython3.12.so`.
+3. **CUDA 12.x is required — 13.0 is not enough.** ThunderKittens' README specifies CUDA 12.3+
+   and its authors develop on 12.6; the megakernel is dense Hopper WGMMA inline PTX, precisely
+   the code that breaks across a major toolkit bump. Vast's H100 images ship **CUDA 13.0 only**,
+   so `00_provision.sh` installs `cuda-toolkit-12-8` alongside it and the build targets that.
+   12.8 also matches the torch cu128 wheels, keeping nvcc and the torch runtime on one version.
+   The driver is untouched and runs 12.8 fine — CUDA is backward compatible with older runtimes.
+4. **Torch must come from the cu128 index**, per the repo README — not default PyPI.
+5. **vLLM and SGLang need separate environments.** Their dependency sets conflict, and
    `bench_engines.py` carries conda-activation machinery for exactly this reason. Three venvs
    total: `mk`, `vllm`, `sglang`.
 

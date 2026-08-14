@@ -24,8 +24,32 @@ esac
 echo "Detected arch: $GPU_ARCH"
 
 say "Checking CUDA toolkit"
-command -v nvcc >/dev/null || die "nvcc not found. Need the CUDA toolkit, not just the driver."
-nvcc --version | tail -2
+# shellcheck disable=SC1091
+source "$ROOT/scripts/lib/cuda_env.sh"
+
+if export_cuda_env; then
+  echo "Found CUDA $(cuda_major_minor "$NVCC") at $CUDA_HOME"
+else
+  echo "No CUDA 12.x toolkit found. System nvcc is: $(cuda_major_minor nvcc || echo none)"
+  echo "Installing cuda-toolkit-${CUDA_SERIES/./-} (userspace only; the driver is untouched)."
+  # ThunderKittens targets CUDA 12.x -- see the note in scripts/lib/cuda_env.sh.
+  # Vast H100 images ship 13.0 only, which is a major bump past anything upstream tests.
+  apt-get update -qq
+  DEBIAN_FRONTEND=noninteractive apt-get install -y -qq "cuda-toolkit-${CUDA_SERIES/./-}"
+  export_cuda_env || die "cuda-toolkit-${CUDA_SERIES} install did not produce /usr/local/cuda-${CUDA_SERIES}"
+  echo "Installed CUDA $(cuda_major_minor "$NVCC") at $CUDA_HOME"
+fi
+
+NVCC_VER="$(cuda_major_minor "$NVCC")"
+case "$NVCC_VER" in
+  12.*) : ;;
+  *) die "Resolved nvcc is $NVCC_VER; ThunderKittens expects 12.x." ;;
+esac
+
+say "Checking python dev headers (build links -lpython3.12)"
+command -v python3-config >/dev/null || die "python3-config missing. Install python3.12-dev."
+ls /usr/lib/x86_64-linux-gnu/libpython3.12.so >/dev/null 2>&1 \
+  || die "libpython3.12.so missing. Install python3.12-dev."
 
 say "Checking HuggingFace access to the gated model"
 # This is the #1 way to waste rented GPU hours. Fail here, before anything slow.

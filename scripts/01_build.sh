@@ -23,11 +23,22 @@ esac
 export GPU
 export THUNDERKITTENS_ROOT="$MK_DIR/ThunderKittens"
 export MEGAKERNELS_ROOT="$MK_DIR"
+
+# The Makefile also defaults PYTHON_VERSION to 3.13 and links -lpython$PYTHON_VERSION,
+# so this must match the interpreter the venv was built with or the link fails.
 export PYTHON_VERSION=3.12
+
+# Build against CUDA 12.x, not the image's 13.0 — see scripts/lib/cuda_env.sh.
+# The Makefile honours NVCC?=nvcc, so exporting NVCC redirects the compile.
+# shellcheck disable=SC1091
+source "$ROOT/scripts/lib/cuda_env.sh"
+export_cuda_env || die "No CUDA 12.x toolkit. Run scripts/00_provision.sh first."
 
 say "Build configuration"
 cat <<EOF
 GPU                 = $GPU
+CUDA_HOME           = $CUDA_HOME
+nvcc                = $NVCC ($(cuda_major_minor "$NVCC"))
 THUNDERKITTENS_ROOT = $THUNDERKITTENS_ROOT
 MEGAKERNELS_ROOT    = $MEGAKERNELS_ROOT
 PYTHON_VERSION      = $PYTHON_VERSION
