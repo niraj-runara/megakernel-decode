@@ -1,0 +1,15 @@
+# Environment fingerprint
+date: 2026-08-14T20:21:51Z
+host: Linux 58b511b33b1a 6.8.0-1046-nvidia #49-Ubuntu SMP PREEMPT_DYNAMIC Wed Jan 28 19:07:52 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+
+## GPU
+NVIDIA H100 80GB HBM3, 81559 MiB, 580.126.20
+
+## nvcc
+Cuda compilation tools, release 12.8, V12.8.93
+Build cuda_12.8.r12.8/compiler.35583870_0
+
+## versions
+torch   2.11.0+cu128
+vllm    0.27.1
+sglang  0.5.9

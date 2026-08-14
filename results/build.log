@@ -1,0 +1,12 @@
+/usr/local/cuda-12.8/bin/nvcc llama.cu -DNDEBUG -Xcompiler=-fPIE --expt-extended-lambda --expt-relaxed-constexpr -Xcompiler=-Wno-psabi -Xcompiler=-fno-strict-aliasing --use_fast_math -forward-unknown-to-host-compiler -O3 -Xnvlink=--verbose -Xptxas=--verbose -Xptxas=--warn-on-spills -std=c++20 -x cu -lrt -lpthread -ldl -lcuda -lcudadevrt -lcudart_static -lcublas -lineinfo -I/workspace/megakernel-decode/reference-megakernels/ThunderKittens/include -I/workspace/megakernel-decode/reference-megakernels/include -I/usr/include/python3.12 -I/workspace/megakernel-decode/.venvs/mk/lib/python3.12/site-packages/pybind11/include -L/usr/lib/python3.12/config-3.12-x86_64-linux-gnu -L/usr/lib/x86_64-linux-gnu  -ldl  -lm  -shared -fPIC -lpython3.12 -DKITTENS_HOPPER -arch=sm_90a -o mk_llama.cpython-312-x86_64-linux-gnu.so
+ptxas info    : 3 bytes gmem
+ptxas info    : Compiling entry function '_ZN10megakernel2mkINS_14default_configE9globals_tILi16ELi2048ELi8192ELi64ELi32ELi8ELi16ELi16ELi132EEJ17attention_partialIS1_S3_E19attention_reductionIS1_S3_E19rms_qkv_rope_appendIS1_S3_E8downprojIS1_S3_E6o_projIS1_S3_E15rms_upgate_siluIS1_S3_E11rms_lm_headIS1_S3_EEEEvT0_' for 'sm_90a'
+ptxas info    : Function properties for _ZN10megakernel2mkINS_14default_configE9globals_tILi16ELi2048ELi8192ELi64ELi32ELi8ELi16ELi16ELi132EEJ17attention_partialIS1_S3_E19attention_reductionIS1_S3_E19rms_qkv_rope_appendIS1_S3_E8downprojIS1_S3_E6o_projIS1_S3_E15rms_upgate_siluIS1_S3_E11rms_lm_headIS1_S3_EEEEvT0_
+    880 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 96 registers, used 16 barriers, 880 bytes cumulative stack size, 10384 bytes smem
+ptxas info    : Compile time = 601.602 ms
+nvlink warning : Skipping incompatible '/usr/lib/x86_64-linux-gnu/librt.a' when searching for -lrt
+nvlink warning : Skipping incompatible '/usr/lib/x86_64-linux-gnu/libpthread.a' when searching for -lpthread
+nvlink warning : Skipping incompatible '/usr/lib/x86_64-linux-gnu/libdl.a' when searching for -ldl
+nvlink warning : Skipping incompatible '/usr/lib/x86_64-linux-gnu/libdl.a' when searching for -ldl
+nvlink info    : 0 bytes gmem

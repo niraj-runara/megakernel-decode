@@ -1,0 +1,7 @@
+engine:            vllm
+prompt tokens:     (server-side) from /workspace/megakernel-decode/results/prompt.txt
+1-token run:       5.557 ms  +/- 0.047
+128-token run:     190.067 ms  +/- 2.690
+decode window:     184.509 ms for 127 tokens
+ms per token:      1.4528
+Tokens per second: 688.31

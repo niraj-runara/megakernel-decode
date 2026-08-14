@@ -1,8 +1,8 @@
 # upstream, cloned by scripts/00_provision.sh
 reference-megakernels/
 
-# benchmark output and environment fingerprints
-results/
+# results/ IS tracked — the logs are the provenance for RESULTS.md, and the
+# instance they were produced on is ephemeral. They are ~100K of plain text.
 
 # python envs created by scripts/00_provision.sh
 .venvs/

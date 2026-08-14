@@ -1,0 +1,22 @@
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files:  33%|███▎      | 2/6 [00:00<00:00,  9.97it/s]Fetching 6 files:  83%|████████▎ | 5/6 [00:00<00:00,  8.39it/s]Fetching 6 files: 100%|██████████| 6/6 [00:08<00:00,  1.41s/it]
+Loading safetensors files:   0%|          | 0/1 [00:00<?, ?it/s]Loading safetensors files: 100%|██████████| 1/1 [00:00<00:00,  1.79it/s]Loading safetensors files: 100%|██████████| 1/1 [00:00<00:00,  1.79it/s]
+assigning to sms with mode rr...
+assign time: 0.0006303787231445312
+sm queue lengths: min=65, max=66, mean=65.48484848484848
+cost per sm: min=0.94, mean=0.98
+  0%|          | 0/1 [00:00<?, ?it/s]interpreting with pyvm...
+pyvm time: 2.5306267738342285
+interpreting with mk...
+mk time: 0.0031232833862304688
+done! diffing tensors:
+k_cache: max adiff: 0.0390625, mean rdiff: 1.6155722732946742e-06
+v_cache: max adiff: 0.0283203125, mean rdiff: 1.710899596218951e-06
+hidden_states: max adiff: 0.0625, mean rdiff: 0.03660285845398903
+barriers: max adiff: 384.0, mean rdiff: 0.015000000596046448
+post_ln_rope_q: max adiff: 0.03515625, mean rdiff: 0.03680846095085144
+attn_out: max adiff: 0.0078125, mean rdiff: 0.0303913876414299
+attn_lse_intermediates: max adiff: 0.0, mean rdiff: 0.0
+attn_out_intermediates: max adiff: 0.0, mean rdiff: 0.0
+silu_out: max adiff: 0.03125, mean rdiff: 0.08715613186359406
+logits: max adiff: 0.125, mean rdiff: 0.050613127648830414
+100%|██████████| 1/1 [00:02<00:00,  2.56s/it]100%|██████████| 1/1 [00:02<00:00,  2.56s/it]
