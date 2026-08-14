@@ -14,8 +14,19 @@ a custom Tier-2 decode layer — are out of scope until step 1 passes.
 
 ## Quick start on a fresh H100 box
 
+This repo is private. Connect with **agent forwarding** so the instance can clone
+it without a key ever being written to a machine we're renting:
+
 ```bash
-git clone <this-repo> megakernel-decode
+ssh -A ubuntu@<instance>            # -A forwards the local SSH agent
+ssh -T git@github-work              # should greet niraj-runara
+```
+
+If forwarding is unavailable, use a fine-grained read-only PAT over HTTPS instead
+and revoke it at teardown. Do not copy a private key onto the instance.
+
+```bash
+git clone git@github-work:niraj-runara/megakernel-decode.git
 cd megakernel-decode
 
 # Llama-3.2-1B-Instruct is GATED. Accept the license first at
@@ -24,6 +35,10 @@ export HF_TOKEN=hf_...
 
 bash scripts/run_all.sh      # provision -> build -> verify, then stops
 ```
+
+> The `github-work` host alias must exist in the instance's `~/.ssh/config`, or
+> substitute `git@github.com` — with agent forwarding, either resolves to the
+> same forwarded key.
 
 `run_all.sh` deliberately halts at the correctness gate. Read
 `results/diff_test.log` and `results/sanity_mk.log`, then continue:
