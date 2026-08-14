@@ -9,6 +9,11 @@ MK_DIR="$ROOT/reference-megakernels"
 say() { printf '\n\033[1;36m==> %s\033[0m\n' "$*"; }
 die() { printf '\n\033[1;31mFAIL: %s\033[0m\n' "$*" >&2; exit 1; }
 
+# Single source of truth for the model across every script. Override to use an
+# ungated mirror while waiting on Meta's gate:
+#   export MODEL=unsloth/Llama-3.2-1B-Instruct
+MODEL="${MODEL:-meta-llama/Llama-3.2-1B-Instruct}"
+
 # ---------------------------------------------------------------- preconditions
 
 say "Checking GPU"
@@ -71,19 +76,31 @@ if [ -z "${HF_TOKEN:-}" ]; then
   fi
 fi
 
-[ "${SKIP_HF_CHECK:-0}" = "1" ] || python3 - <<'PY' || die "Cannot access the gated model. Has the license been accepted for THIS account?"
-import os, sys, urllib.request
-req = urllib.request.Request(
-    "https://huggingface.co/api/models/meta-llama/Llama-3.2-1B-Instruct",
-    headers={"Authorization": f"Bearer {os.environ['HF_TOKEN']}"},
-)
-try:
-    urllib.request.urlopen(req, timeout=20)
-    print("HF gated-model access OK")
-except Exception as e:
-    print(f"HF check failed: {e}", file=sys.stderr)
-    sys.exit(1)
-PY
+if [ "${SKIP_HF_CHECK:-0}" != "1" ]; then
+  # Fetch an actual gated FILE, not the model metadata endpoint. /api/models/...
+  # returns 200 for any valid token even when the gate has not been granted, so
+  # the earlier version of this check passed and the run still died later at
+  # from_pretrained. resolve/main/config.json is the real signal.
+  HF_CODE="$(curl -s -o /dev/null -w '%{http_code}' \
+    -H "Authorization: Bearer $HF_TOKEN" \
+    "https://huggingface.co/${MODEL}/resolve/main/config.json")"
+
+  case "$HF_CODE" in
+    200|302|307)
+      echo "HF access to ${MODEL} OK (HTTP $HF_CODE)"
+      ;;
+    401|403)
+      die "HTTP $HF_CODE for ${MODEL}.
+  The token is valid but this account is NOT on the authorized list.
+  Request access at https://huggingface.co/${MODEL} and wait for approval.
+  To proceed now with an ungated mirror instead:
+      export MODEL=unsloth/Llama-3.2-1B-Instruct"
+      ;;
+    *)
+      die "Unexpected HTTP $HF_CODE fetching ${MODEL}/resolve/main/config.json"
+      ;;
+  esac
+fi
 
 # ---------------------------------------------------------------- repo
 
