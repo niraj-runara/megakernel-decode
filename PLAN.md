@@ -7,7 +7,7 @@ persistent kernel beats vLLM and SGLang at batch size 1 on a single H100.
 If the launch-overhead thesis does not hold — or we cannot measure it credibly — steps 2 and 3
 are not worth funding. Budget is roughly $50 and a few days.
 
-**Status:** planned. Not yet executed — requires an H100, and the dev machine is macOS/arm64.
+**Status: PASSED** on 2026-08-14 (1× H100 80GB HBM3). See [RESULTS.md](RESULTS.md).
 
 ---
 
