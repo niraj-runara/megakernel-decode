@@ -39,8 +39,10 @@ cd "$MK_DIR"
 
 free_port
 say "vLLM baseline"
+# NOTE: --disable-log-requests was removed in vLLM 0.27; passing it exits with
+# code 2 (argparse error) and the harness just reports "server crashed".
 VLLM_LAUNCH="source $ROOT/.venvs/vllm/bin/activate && \
-vllm serve $MODEL --port $PORT --max-model-len 4096 --disable-log-requests"
+vllm serve $MODEL --port $PORT --max-model-len 4096"
 
 python megakernels/scripts/bench_engines.py \
   model="$MODEL" \
