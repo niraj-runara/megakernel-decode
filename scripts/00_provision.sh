@@ -53,12 +53,25 @@ ls /usr/lib/x86_64-linux-gnu/libpython3.12.so >/dev/null 2>&1 \
 
 say "Checking HuggingFace access to the gated model"
 # This is the #1 way to waste rented GPU hours. Fail here, before anything slow.
-[ -n "${HF_TOKEN:-}" ] || die "HF_TOKEN is not set.
+#
+# Set ALLOW_NO_HF=1 to downgrade this to a warning: the toolchain install and the
+# megakernel build need no HF access, so it is reasonable to provision and compile
+# while waiting on a token. Everything from 02_verify.sh onward does need it.
+if [ -z "${HF_TOKEN:-}" ]; then
+  MSG="HF_TOKEN is not set.
   Llama-3.2-1B-Instruct is GATED. Accept the license at
   https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct
   then: export HF_TOKEN=hf_..."
+  if [ "${ALLOW_NO_HF:-0}" = "1" ]; then
+    printf '\n\033[1;33mWARN: %s\033[0m\n' "$MSG"
+    printf '\033[1;33mContinuing (ALLOW_NO_HF=1). Build will work; 02_verify.sh will not.\033[0m\n'
+    SKIP_HF_CHECK=1
+  else
+    die "$MSG"
+  fi
+fi
 
-python3 - <<'PY' || die "Cannot access the gated model. Has the license been accepted for THIS account?"
+[ "${SKIP_HF_CHECK:-0}" = "1" ] || python3 - <<'PY' || die "Cannot access the gated model. Has the license been accepted for THIS account?"
 import os, sys, urllib.request
 req = urllib.request.Request(
     "https://huggingface.co/api/models/meta-llama/Llama-3.2-1B-Instruct",
