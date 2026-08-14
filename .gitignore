@@ -1,0 +1,27 @@
+# upstream, cloned by scripts/00_provision.sh
+reference-megakernels/
+
+# benchmark output and environment fingerprints
+results/
+
+# python envs created by scripts/00_provision.sh
+.venvs/
+__pycache__/
+*.py[cod]
+.python-version
+
+# build artifacts
+*.so
+*.o
+
+# model weights / caches
+*.safetensors
+*.bin
+.cache/
+hf_cache/
+
+# os
+.DS_Store
+
+# local editor/tool config
+.claude/
